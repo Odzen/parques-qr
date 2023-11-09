@@ -1,6 +1,6 @@
 <script>
 	import './styles.scss';
-	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import { navigating } from '$app/stores';
 	import LoadingSpinner from '../components/icons/LoadingSpinner.svelte';
 	import Header from '../components/Header.svelte';
@@ -15,16 +15,27 @@
 				return {
 					...curr,
 					isLoading: false,
-					user: user
+					currentUser: user
 				};
 			});
+
+			if (
+				browser &&
+				!$authStore?.currentUser &&
+				!$authStore?.isLoading &&
+				window.location.pathname !== '/login'
+			) {
+				window.location.href = '/';
+			}
 		});
+
+		return unsubscribe;
 	});
 </script>
 
 <div class="app">
 	<div class="app-header">
-		{#if $page.data.user}
+		{#if $authStore.currentUser}
 			<Header />
 		{/if}
 	</div>
@@ -39,7 +50,7 @@
 	</main>
 
 	<footer>
-		<p>Valid Id App</p>
+		<p>Parques Qr</p>
 	</footer>
 </div>
 

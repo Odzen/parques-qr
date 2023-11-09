@@ -1,33 +1,44 @@
 <script>
 	import TextInput from '../../../components/inputs/TextInput.svelte';
 	import MainButton from '../../../components/buttons/MainButton.svelte';
-	import { applyAction, enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
 	import { validateEmailPattern } from '$lib/validators.js';
-
-	export let form;
+	import { authHandlers, authStore } from '../../../stores/authStore';
 
 	let email = '';
+	let password = '';
+	let errorLogin = '';
+
 	$: emailValidation = validateEmailPattern(email);
+	$: passwordValidation = password.length > 5;
+
+	const login = async () => {
+		try {
+			await authHandlers.login(email, password);
+		} catch (err) {
+			console.log('error', err);
+
+			if (err?.code === 'auth/user-not-found') {
+				errorLogin = 'El usuario no existe';
+			} else if (err?.code === 'auth/wrong-password') {
+				errorLogin = 'La contraseña es incorrecta';
+			} else {
+				errorLogin = 'Ocurrió un error';
+			}
+		}
+	};
+
+	$: if ($authStore.currentUser) {
+		window.location.href = '/dashboard';
+	}
 </script>
 
 <div class="login">
-	<form
-		action="?/login"
-		method="POST"
-		id="login-form"
-		use:enhance={() => {
-			return async ({ result }) => {
-				invalidateAll();
-				await applyAction(result);
-			};
-		}}
-	>
+	<form id="login-form" on:submit={async () => await login()}>
 		<h1>Ingreso</h1>
 
 		<TextInput
 			id="email"
-			type="text"
+			type="email"
 			bind:value={email}
 			invalid={email && !emailValidation.isValid}
 			label="Email"
@@ -35,17 +46,26 @@
 			required
 		/>
 
-		<TextInput id="password" type="password" label="Contraseña" placeholder="****" required />
+		<TextInput
+			id="password"
+			bind:value={password}
+			invalid={password && !passwordValidation}
+			type="password"
+			label="Contraseña"
+			placeholder="****"
+			required
+		/>
 
-		{#if form?.credentials}
-			<p class="error">Las credenciales son incorrectas</p>
+		{#if errorLogin}
+			<p class="error">{errorLogin}</p>
 		{/if}
 
-		{#if form?.user}
-			<p class="error">Hubo un error al ingresar</p>
-		{/if}
-
-		<MainButton text="Ingresar" type="submit" form="login-form" />
+		<MainButton
+			text="Ingresar"
+			type="submit"
+			form="login-form"
+			disabled={!emailValidation.isValid || !passwordValidation}
+		/>
 	</form>
 </div>
 

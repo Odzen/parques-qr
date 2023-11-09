@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { firebaseAuth } from '../lib/firebase/firebase.client';
-import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 
 export const authStore = writable({
 	isLoading: true,
@@ -8,8 +8,8 @@ export const authStore = writable({
 });
 
 export const authHandlers = {
-	signup: async (email, password) => {
-		await createUserWithEmailAndPassword(firebaseAuth, email, password);
+	login: async (email, password) => {
+		await signInWithEmailAndPassword(firebaseAuth, email, password);
 	},
 	logout: async () => {
 		await firebaseAuth.signOut();
