@@ -15,6 +15,7 @@
 </script>
 
 <header class="Header">
+	<h2>PasaPass</h2>
 	<nav class:displayContent>
 		<ul>
 			<form class="Header-logout-mobile" on:submit|preventDefault={logout}>
@@ -45,6 +46,12 @@
 		align-items: center;
 		background-color: var(--white);
 		padding: 20px;
+		h2 {
+			font-size: 24px;
+			font-weight: 700;
+			color: var(--black);
+		}
+
 		button {
 			background-color: transparent;
 			border: none;

@@ -50,7 +50,7 @@
 	</main>
 
 	<footer>
-		<p>Parques Qr</p>
+		<p>PasaPass</p>
 	</footer>
 </div>
 

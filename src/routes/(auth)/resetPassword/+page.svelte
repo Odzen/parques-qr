@@ -5,24 +5,21 @@
 	import { authHandlers, authStore } from '../../../stores/authStore';
 
 	let email = '';
-	let password = '';
-	let errorLogin = '';
+	let errorPassword = '';
 
 	$: emailValidation = validateEmailPattern(email);
-	$: passwordValidation = password.length > 5;
 
-	const login = async () => {
+	const resetPassword = async () => {
 		try {
-			await authHandlers.login(email, password);
+			const response = await authHandlers.resetPassword(email);
+			console.log('response', response);
 		} catch (err) {
-			console.log('error', err);
+			console.log('error resetting password', err);
 
 			if (err?.code === 'auth/user-not-found') {
-				errorLogin = 'El usuario no existe';
-			} else if (err?.code === 'auth/wrong-password') {
-				errorLogin = 'La contraseña es incorrecta';
+				errorPassword = 'El usuario no existe';
 			} else {
-				errorLogin = 'Ocurrió un error';
+				errorPassword = 'Ocurrió un error';
 			}
 		}
 	};
@@ -32,9 +29,9 @@
 	}
 </script>
 
-<div class="login">
-	<h1>Ingreso</h1>
-	<form id="login-form" on:submit={async () => await login()}>
+<div class="resetPassword">
+	<h1>Ingresar correo</h1>
+	<form id="reset-password-form" on:submit={async () => await resetPassword()}>
 		<TextInput
 			id="email"
 			type="email"
@@ -45,39 +42,29 @@
 			required
 		/>
 
-		<TextInput
-			id="password"
-			bind:value={password}
-			invalid={password && !passwordValidation}
-			type="password"
-			label="Contraseña"
-			placeholder="******"
-			required
-		/>
-
-		{#if errorLogin}
-			<p class="error">{errorLogin}</p>
+		{#if errorPassword}
+			<p class="error">{errorPassword}</p>
 		{/if}
 
-		<a href="/resetPassword">Olvidé contraseña</a>
+		<a href="/login">Ingresar</a>
 
 		<MainButton
-			text="Ingresar"
+			text="Restablecer contraseña"
 			type="submit"
-			form="login-form"
-			disabled={!emailValidation.isValid || !passwordValidation}
+			form="reset-password-form"
+			disabled={!emailValidation.isValid}
 		/>
 	</form>
 </div>
 
 <style lang="scss">
-	.login {
+	.resetPassword {
 		display: flex;
 		padding-inline: 20px;
 		justify-content: center;
+		align-items: center;
 		flex-direction: column;
 		gap: 20px;
-		align-items: center;
 		margin: auto 0;
 
 		h1 {

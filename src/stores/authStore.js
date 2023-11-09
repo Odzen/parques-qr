@@ -15,6 +15,8 @@ export const authHandlers = {
 		await firebaseAuth.signOut();
 	},
 	resetPassword: async (email) => {
+		if (!email) throw new Error('Email is required');
+
 		await sendPasswordResetEmail(firebaseAuth, email);
 	}
 };
