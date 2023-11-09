@@ -52,7 +52,7 @@
 			invalid={password && !passwordValidation}
 			type="password"
 			label="Contraseña"
-			placeholder="****"
+			placeholder="******"
 			required
 		/>
 
