@@ -4,6 +4,22 @@
 	import { navigating } from '$app/stores';
 	import LoadingSpinner from '../components/icons/LoadingSpinner.svelte';
 	import Header from '../components/Header.svelte';
+	import { onMount } from 'svelte';
+	import { firebaseAuth } from '../lib/firebase/firebase.client';
+	import { authStore } from '../stores/authStore.js';
+
+	onMount(() => {
+		const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
+			console.log('user', user);
+			authStore.update((curr) => {
+				return {
+					...curr,
+					isLoading: false,
+					user: user
+				};
+			});
+		});
+	});
 </script>
 
 <div class="app">
