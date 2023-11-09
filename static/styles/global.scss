@@ -1,0 +1,151 @@
+/* imports */
+@font-face {
+	font-family: 'Mulish';
+	src: url('/fonts/mulish-400-regular.ttf');
+	font-weight: 400;
+}
+
+@font-face {
+	font-family: 'Mulish';
+	src: url('/fonts/mulish-700-bold.ttf');
+	font-weight: 700;
+}
+
+@font-face {
+	font-family: 'Mulish';
+	src: url('/fonts/mulish-900-black.ttf');
+	font-weight: 900;
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('/fonts/inter-500-medium.ttf');
+	font-weight: 500;
+}
+
+/* variables */
+:root {
+	--black: #000000;
+	--white: #ffffff;
+
+	/* Primary */
+	--primary-1: #003459;
+	--primary-2: #007ea7;
+	--primary-3: #00a8ea;
+
+	/* Neutral */
+	--neutral-100: #1e1e1e;
+	--neutral-90: #4b4b4b;
+	--neutral-80: #5e5e5e;
+	--neutral-70: #757576;
+	--neutral-60: #929293;
+	--neutral-50: #b6b7b8;
+	--neutral-40: #d1d1d1;
+	--neutral-30: #f0f0f0;
+	--neutral-20: #f5f5f5;
+
+	--color-bg-0: rgb(202, 216, 228);
+	--color-bg-1: hsl(209, 36%, 86%);
+	--color-bg-2: hsl(224, 44%, 95%);
+	--color-theme-1: #ff3e00;
+	--color-theme-2: #4075a6;
+	--color-text: rgba(0, 0, 0, 0.7);
+	--column-width: 42rem;
+	--column-margin-top: 4rem;
+
+	/* Success */
+	--success-base: #199f57;
+	--success-bg-color: #f2fff8;
+	--success-pressed: #0f4a2b;
+	--success-hover: #50be83;
+	--success-focus: #dcffec;
+
+	/* Warning */
+	--warning-base: #e0ce2c;
+	--warning-bg-color: #fefadc;
+	--warning-pressed: #95891d;
+	--warning-hover: #bbac25;
+	--warning-focus: #fdf8cf;
+
+	/* Error */
+	--error-base: #a82525;
+	--error-bg-color: #ffe8e8;
+	--error-pressed: #541212;
+	--error-hover: #8c1f1f;
+	--error-focus: #ffdfdf;
+}
+
+/* breakpoint variables */
+$breakpoint-desktop-L: 1440px;
+$breakpoint-desktop: 1024px;
+$breakpoint-tablet: 700px;
+$breakpoint-mobile-L: 425px;
+$breakpoint-mobile-M: 375px;
+$breakpoint-mobile-S: 320px;
+
+/* mixins */
+@mixin base-font {
+	font-family: 'Mulish';
+	font-size: 14px;
+}
+
+@mixin header {
+	margin: 0;
+	font-weight: 900;
+}
+
+@mixin label-input {
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 21px;
+	color: var(--neutral-90);
+}
+
+@mixin h1 {
+	@include header;
+
+	font-size: 48px;
+	line-height: 50px;
+	letter-spacing: 0.2px;
+	color: var(--primary-100);
+
+	@media screen and (min-width: $breakpoint-desktop) {
+		font-size: 60px;
+		line-height: 104.6%;
+	}
+}
+
+@mixin h3 {
+	@include header;
+
+	font-size: 40px;
+	line-height: 41px;
+
+	@media screen and (min-width: $breakpoint-desktop) {
+		font-size: clamp(50.7px, 3.968vw, 60px);
+		line-height: clamp(55.0144px, 4.298vw, 65px);
+	}
+}
+
+@mixin h4 {
+	@include header;
+
+	font-size: 24px;
+	line-height: 34px;
+
+	@media screen and (min-width: $breakpoint-desktop) {
+		font-size: clamp(16px, 2.25vw, 34px);
+		line-height: clamp(16px, 2.25vw, 34px);
+	}
+}
+
+@mixin max-dimension-wrapper {
+	max-width: 1600px;
+	box-sizing: border-box;
+	margin: 0 auto;
+}
+
+/* base styles */
+* {
+	@include base-font;
+}
