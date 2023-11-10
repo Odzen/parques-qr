@@ -44,6 +44,7 @@
 		}
 	];
 
+	let isLoading = false;
 	$: if (decodedTextQr) {
 		console.log('decodedTextQr', decodedTextQr);
 		scanning = false;
@@ -64,9 +65,10 @@
 					console.log('error validate passport', err);
 				});
 		} else if (isForCancelTransaction) {
+			console.log('Canceling transaction...');
 			cancelTransaction()
 				.then(() => {
-					console.log('cancel transaction');
+					console.log('Transaction cancelled');
 				})
 				.catch((err) => {
 					console.log('error cancel transaction', err);
@@ -74,22 +76,54 @@
 		}
 	}
 
+	let response = '';
+
 	const passportInformation = async () => {
-		console.log('Passport information');
+		try {
+			isLoading = true;
+			setTimeout(() => {
+				response = 'Passport information';
+				isLoading = false;
+			}, 5000);
+		} catch (err) {
+			console.log('error passport information', err);
+		}
 	};
 
 	const validatePassport = async () => {
-		console.log('Validate Passport');
+		try {
+			isLoading = true;
+			setTimeout(() => {
+				response = 'Validate information';
+				isLoading = false;
+			}, 5000);
+		} catch (err) {
+			console.log('error validate passport', err);
+		}
 	};
 
 	const cancelTransaction = async () => {
-		console.log('Cancel transaction');
+		console.log('Function Call Cancel');
+		try {
+			isLoading = true;
+			setTimeout(() => {
+				response = 'Cancel Passport';
+				isLoading = false;
+			}, 5000);
+		} catch (err) {
+			console.log('error cancel transaction', err);
+		}
 	};
+
+	$: console.log('response', response);
+	$: console.log('isLoading', isLoading);
 </script>
 
 <div class="dashboard">
 	{#if $authStore.currentUser}
-		{#if scanning}
+		{#if isLoading}
+			Loading...
+		{:else if scanning}
 			<div class="dashboard-scanner">
 				<QrScanner bind:decodedTextQr bind:scanning />
 			</div>
