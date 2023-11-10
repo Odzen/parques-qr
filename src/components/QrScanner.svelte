@@ -1,6 +1,7 @@
 <script>
 	import { Html5Qrcode } from 'html5-qrcode';
 	import { onMount } from 'svelte';
+	import MainButton from './buttons/MainButton.svelte';
 
 	export let decodedTextQr = '';
 	export let scanning = true;
@@ -32,10 +33,8 @@
 		scanning = false;
 	}
 
-	function onScanSuccess(decodedText, decodedResult) {
+	function onScanSuccess(decodedText, _decodedResult) {
 		decodedTextQr = decodedText;
-		alert(`Code matched = ${decodedText}`);
-		console.log(decodedResult);
 	}
 
 	function onScanFailure(error) {
@@ -46,7 +45,9 @@
 <div class="QrScanner">
 	<reader id="reader" />
 	{#if scanning}
-		<button on:click={stop}>stop</button>
+		<div class="QrScanner-button">
+			<MainButton on:click={stop} type="button" text="Regresar" />
+		</div>
 	{/if}
 </div>
 
@@ -57,15 +58,11 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		// height: fit-content;
-		// height: 100%;
-		// overflow: hidden;
 		gap: 20px;
 
 		reader {
 			width: 100%;
-			// height: 500px;
-			background-color: black;
+			background-color: var(--black);
 		}
 	}
 </style>
