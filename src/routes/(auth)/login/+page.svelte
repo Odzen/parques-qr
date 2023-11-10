@@ -33,6 +33,10 @@
 </script>
 
 <div class="login">
+	<figure>
+		<img src="/images/pasapass.jpg" alt="logo" />
+	</figure>
+
 	<h1>Ingreso</h1>
 	<form id="login-form" on:submit={async () => await login()}>
 		<TextInput
@@ -79,6 +83,19 @@
 		gap: 20px;
 		align-items: center;
 		margin: auto 0;
+
+		figure {
+			display: flex;
+			border-radius: 20px;
+			width: 150px;
+			margin: 0;
+
+			img {
+				width: 100%;
+				height: 100%;
+				border-radius: inherit;
+			}
+		}
 
 		h1 {
 			font-weight: 700;
