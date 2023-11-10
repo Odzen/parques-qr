@@ -3,6 +3,8 @@
 	import LoadingSpinner from '../../../components/icons/LoadingSpinner.svelte';
 	import MainButton from '../../../components/buttons/MainButton.svelte';
 	import QrScanner from '../../../components/QrScanner.svelte';
+	import PassportsService from '../../../services/passports/PassportsService';
+	import { splitCodePassport } from '../../../lib/utils.js';
 
 	let decodedTextQr = '';
 	let scanning = false;
@@ -10,6 +12,8 @@
 	let isForPassportInformation = false;
 	let isForValidatePassport = false;
 	let isForCancelTransaction = false;
+
+	let responseCallingAPI = '';
 
 	const actions = [
 		{
@@ -46,83 +50,109 @@
 
 	let isLoading = false;
 	$: if (decodedTextQr) {
-		console.log('decodedTextQr', decodedTextQr);
 		scanning = false;
+
+		const { code, pass } = splitCodePassport(decodedTextQr);
+
 		if (isForPassportInformation) {
-			passportInformation()
-				.then(() => {
-					console.log('passport information');
+			passportInformation(code, pass)
+				.then((response) => {
+					responseCallingAPI = response?.resp;
 				})
 				.catch((err) => {
 					console.log('error passport information', err);
+					responseCallingAPI = err?.message;
 				});
 		} else if (isForValidatePassport) {
-			validatePassport()
-				.then(() => {
-					console.log('validate passport');
+			validatePassport(code, pass)
+				.then((response) => {
+					responseCallingAPI = response?.resp;
 				})
 				.catch((err) => {
 					console.log('error validate passport', err);
+					responseCallingAPI = err?.message;
+
+					console.log('responseCallingAPI', responseCallingAPI);
 				});
 		} else if (isForCancelTransaction) {
-			console.log('Canceling transaction...');
-			cancelTransaction()
-				.then(() => {
-					console.log('Transaction cancelled');
+			cancelTransaction(code, pass)
+				.then((response) => {
+					responseCallingAPI = response?.resp;
 				})
 				.catch((err) => {
 					console.log('error cancel transaction', err);
+					responseCallingAPI = err?.message;
 				});
 		}
 	}
 
-	let response = '';
+	const passportsService = new PassportsService();
 
-	const passportInformation = async () => {
+	const passportInformation = async (code, pass) => {
 		try {
 			isLoading = true;
-			setTimeout(() => {
-				response = 'Passport information';
-				isLoading = false;
-			}, 5000);
+
+			let response = await passportsService.infoPassport({
+				code,
+				pass
+			});
+
+			isLoading = false;
+			return response;
 		} catch (err) {
-			console.log('error passport information', err);
+			isLoading = false;
+			throw err;
 		}
 	};
 
-	const validatePassport = async () => {
+	const validatePassport = async (code, pass) => {
 		try {
 			isLoading = true;
-			setTimeout(() => {
-				response = 'Validate information';
-				isLoading = false;
-			}, 5000);
+
+			const response = await passportsService.validatePassport({
+				code,
+				pass,
+				email: $authStore.currentUser.email
+			});
+
+			isLoading = false;
+			console.log('validate response', response);
+			return response;
 		} catch (err) {
-			console.log('error validate passport', err);
+			isLoading = false;
+			throw err;
 		}
 	};
 
-	const cancelTransaction = async () => {
-		console.log('Function Call Cancel');
+	const cancelTransaction = async (code, pass) => {
 		try {
 			isLoading = true;
-			setTimeout(() => {
-				response = 'Cancel Passport';
-				isLoading = false;
-			}, 5000);
+
+			const response = await passportsService.cancelTransaction({
+				code,
+				pass,
+				email: $authStore.currentUser.email
+			});
+
+			isLoading = false;
+			console.log('cancel response', response);
+			return response;
 		} catch (err) {
-			console.log('error cancel transaction', err);
+			isLoading = false;
+			throw err;
 		}
 	};
-
-	$: console.log('response', response);
-	$: console.log('isLoading', isLoading);
 </script>
 
 <div class="dashboard">
 	{#if $authStore.currentUser}
 		{#if isLoading}
-			Loading...
+			Cargando...
+		{:else if responseCallingAPI}
+			<div class="dashboard-response">
+				<p>{responseCallingAPI}</p>
+				<a href="/dashboard">Regresar</a>
+			</div>
 		{:else if scanning}
 			<div class="dashboard-scanner">
 				<QrScanner bind:decodedTextQr bind:scanning />
@@ -146,6 +176,24 @@
 		justify-content: center;
 		margin: auto 0;
 
+		&-response {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			padding: 20px;
+			max-width: 600px;
+
+			p {
+				font-size: 16px;
+			}
+
+			a {
+				text-decoration: none;
+				font-size: 15px;
+				color: var(--primary-2);
+			}
+		}
+
 		&-actions {
 			display: flex;
 			flex-direction: column;
@@ -156,7 +204,6 @@
 			display: flex;
 			width: 100%;
 			height: fit-content;
-			// max-height: 500px;
 		}
 	}
 </style>

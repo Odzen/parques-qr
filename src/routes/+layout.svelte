@@ -10,7 +10,6 @@
 
 	onMount(() => {
 		const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
-			console.log('user', user);
 			authStore.update((curr) => {
 				return {
 					...curr,

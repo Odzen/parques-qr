@@ -16,15 +16,21 @@ export default class RequestService {
 		};
 	}
 
-	get authPrefix() {
-		return 'Bearer';
-	}
-
 	get accessTokenCookieName() {
 		return import.meta.env.VITE_SESSION_NAME_TOKEN;
 	}
 
-	async _fetch({ url, config = {}, accessToken = '' }) {
+	get basicAuthToken() {
+		return btoa(
+			`${import.meta.env.VITE_FIREBASE_USERNAME}:${import.meta.env.VITE_FIREBASE_PASSWORD}`
+		);
+	}
+
+	getAuthPrefix(isBearer = true) {
+		return isBearer ? 'Bearer' : 'Basic';
+	}
+
+	async _fetch({ url, config = {}, accessToken = '', isBearer = true }) {
 		config = {
 			validateStatus: null, // Axios resolve all the promises
 			...config
@@ -35,46 +41,15 @@ export default class RequestService {
 		if (accessToken)
 			config.headers = {
 				...config.headers,
-				Authorization: `${this.authPrefix} ${accessToken}`
+				Authorization: `${this.getAuthPrefix(isBearer)} ${accessToken}`
 			};
+
+		console.log('url', url);
+		console.log('config', config);
 
 		let response = await axios(url, config);
 
 		return response;
-	}
-
-	async get({
-		endpoint,
-		headers = {},
-		body = {},
-		params = {},
-		accessToken = '',
-		external = false
-	}) {
-		const RequestURL = this.URL;
-		RequestURL.pathname = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
-
-		const response = await this._fetch({
-			url: external ? endpoint : decodeURIComponent(RequestURL.href),
-			config: {
-				method: 'GET',
-				headers,
-				body,
-				params
-			},
-			accessToken: accessToken
-		});
-
-		const responseData = response.data;
-
-		if (response.status >= 200 && response.status < 300) {
-			return responseData;
-		} else {
-			throw new RequestError({
-				status: response.status,
-				message: responseData
-			});
-		}
 	}
 
 	async post({
@@ -82,11 +57,17 @@ export default class RequestService {
 		headers = {},
 		data = {},
 		params = {},
-		accessToken = {},
+		accessToken = '',
 		external = false
 	}) {
 		const RequestURL = this.URL;
 		RequestURL.pathname = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+
+		let tokenAuth = accessToken;
+
+		if (!accessToken) {
+			tokenAuth = this.basicAuthToken;
+		}
 
 		const response = await this._fetch({
 			url: external ? endpoint : RequestURL.href,
@@ -96,7 +77,8 @@ export default class RequestService {
 				headers,
 				params
 			},
-			accessToken: accessToken
+			accessToken: tokenAuth,
+			isBearer: accessToken.length > 0
 		});
 
 		const responseData = response.data;
@@ -107,81 +89,6 @@ export default class RequestService {
 			throw new RequestError({
 				status: response.status,
 				message: responseData
-			});
-		}
-	}
-
-	async put({ endpoint, headers = {}, data = {}, accessToken = {}, external = false }) {
-		const RequestURL = this.URL;
-		RequestURL.pathname = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
-
-		const response = await this._fetch({
-			url: external ? endpoint : RequestURL.href,
-			config: {
-				method: 'PUT',
-				data,
-				headers
-			},
-			accessToken: accessToken
-		});
-
-		const responseData = response.data;
-
-		if (response.status >= 200 && response.status < 300) {
-			return responseData;
-		} else {
-			throw new RequestError({
-				status: response.status,
-				message: responseData
-			});
-		}
-	}
-
-	async patch({ endpoint, headers = {}, data = {}, accessToken = {}, external = false }) {
-		const RequestURL = this.URL;
-		RequestURL.pathname = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
-
-		const response = await this._fetch({
-			url: external ? endpoint : RequestURL.href,
-			config: {
-				method: 'PATCH',
-				data,
-				headers
-			},
-			accessToken: accessToken
-		});
-
-		const responseData = response.data;
-
-		if (response.status >= 200 && response.status < 300) {
-			return responseData;
-		} else {
-			throw new RequestError({
-				status: response.status,
-				message: responseData
-			});
-		}
-	}
-
-	async delete({ endpoint, headers = {}, accessToken = {}, external = false }) {
-		const RequestURL = this.URL;
-		RequestURL.pathname = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
-
-		const response = await this._fetch({
-			url: external ? endpoint : RequestURL.href,
-			config: {
-				method: 'DELETE',
-				headers
-			},
-			accessToken: accessToken
-		});
-
-		if (response.status >= 200 && response.status < 300) {
-			return response;
-		} else {
-			throw new RequestError({
-				status: response.status,
-				message: response
 			});
 		}
 	}
