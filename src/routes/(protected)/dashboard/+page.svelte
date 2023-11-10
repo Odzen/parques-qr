@@ -14,11 +14,13 @@
 	let isForCancelTransaction = false;
 
 	let responseCallingAPI = '';
+	let lastAction = -1;
 
 	const actions = [
 		{
 			text: 'Ver información de QR',
 			action: () => {
+				responseCallingAPI = '';
 				scanning = true;
 				isForPassportInformation = true;
 				isForValidatePassport = false;
@@ -30,6 +32,7 @@
 			text: 'Autorizar QR',
 			action: () => {
 				scanning = true;
+				responseCallingAPI = '';
 				isForPassportInformation = false;
 				isForValidatePassport = true;
 				isForCancelTransaction = false;
@@ -40,6 +43,7 @@
 			text: 'Anular autorización',
 			action: () => {
 				scanning = true;
+				responseCallingAPI = '';
 				isForPassportInformation = false;
 				isForValidatePassport = false;
 				isForCancelTransaction = true;
@@ -55,6 +59,7 @@
 		const { code, pass } = splitCodePassport(decodedTextQr);
 
 		if (isForPassportInformation) {
+			lastAction = 0;
 			passportInformation(code, pass)
 				.then((response) => {
 					responseCallingAPI = response?.resp;
@@ -64,6 +69,7 @@
 					responseCallingAPI = err?.message;
 				});
 		} else if (isForValidatePassport) {
+			lastAction = 1;
 			validatePassport(code, pass)
 				.then((response) => {
 					responseCallingAPI = response?.resp;
@@ -73,6 +79,7 @@
 					responseCallingAPI = err?.message;
 				});
 		} else if (isForCancelTransaction) {
+			lastAction = 2;
 			cancelTransaction(code, pass)
 				.then((response) => {
 					responseCallingAPI = response?.resp;
@@ -149,7 +156,11 @@
 		{:else if responseCallingAPI}
 			<div class="dashboard-response">
 				<p>{responseCallingAPI}</p>
-				<a href="/dashboard">Regresar</a>
+
+				<div class="dashboard-response-ctas">
+					<a href="/dashboard">Regresar</a>
+					<button on:click={actions[lastAction].action} type="button">Escanear otro código</button>
+				</div>
 			</div>
 		{:else if scanning}
 			<div class="dashboard-scanner">
@@ -189,6 +200,22 @@
 				text-decoration: none;
 				font-size: 15px;
 				color: var(--primary-2);
+			}
+
+			button {
+				margin: 0;
+				padding: 0;
+				font-size: 15px;
+				color: var(--primary-2);
+				background: none;
+				border: none;
+				cursor: pointer;
+				width: fit-content;
+			}
+
+			&-ctas {
+				display: flex;
+				gap: 25px;
 			}
 		}
 

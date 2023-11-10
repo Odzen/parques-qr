@@ -44,9 +44,6 @@ export default class RequestService {
 				Authorization: `${this.getAuthPrefix(isBearer)} ${accessToken}`
 			};
 
-		console.log('url', url);
-		console.log('config', config);
-
 		let response = await axios(url, config);
 
 		return response;

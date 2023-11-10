@@ -15,8 +15,6 @@
 		try {
 			await authHandlers.login(email, password);
 		} catch (err) {
-			console.log('error', err);
-
 			if (err?.code === 'auth/user-not-found') {
 				errorLogin = 'El usuario no existe';
 			} else if (err?.code === 'auth/wrong-password') {
