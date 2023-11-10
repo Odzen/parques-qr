@@ -5,8 +5,7 @@
 	import QrScanner from '../../../components/QrScanner.svelte';
 
 	let decodedTextQr = '';
-	let showQrScanner = false;
-	let scanning = true;
+	let scanning = false;
 
 	const actions = [
 		{
