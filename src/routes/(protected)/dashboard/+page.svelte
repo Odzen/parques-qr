@@ -71,8 +71,6 @@
 				.catch((err) => {
 					console.log('error validate passport', err);
 					responseCallingAPI = err?.message;
-
-					console.log('responseCallingAPI', responseCallingAPI);
 				});
 		} else if (isForCancelTransaction) {
 			cancelTransaction(code, pass)
@@ -116,7 +114,7 @@
 			});
 
 			isLoading = false;
-			console.log('validate response', response);
+
 			return response;
 		} catch (err) {
 			isLoading = false;
@@ -135,7 +133,7 @@
 			});
 
 			isLoading = false;
-			console.log('cancel response', response);
+
 			return response;
 		} catch (err) {
 			isLoading = false;

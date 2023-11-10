@@ -15,7 +15,10 @@
 </script>
 
 <header class="Header">
-	<h2>PasaPass</h2>
+	<!-- <h2>PasaPass</h2> -->
+	<figure>
+		<img src="/images/pasapass.jpg" alt="logo" />
+	</figure>
 	<nav class:displayContent>
 		<ul>
 			<form class="Header-logout-mobile" on:submit|preventDefault={logout}>
@@ -46,6 +49,20 @@
 		align-items: center;
 		background-color: var(--white);
 		padding: 20px;
+
+		figure {
+			display: flex;
+			border-radius: 10px;
+			width: 80px;
+			margin: 0;
+
+			img {
+				width: 100%;
+				height: 100%;
+				border-radius: inherit;
+			}
+		}
+
 		h2 {
 			font-size: 24px;
 			font-weight: 700;
