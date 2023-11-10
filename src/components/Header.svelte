@@ -63,11 +63,11 @@
 			}
 		}
 
-		h2 {
-			font-size: 24px;
-			font-weight: 700;
-			color: var(--black);
-		}
+		// h2 {
+		// 	font-size: 24px;
+		// 	font-weight: 700;
+		// 	color: var(--black);
+		// }
 
 		button {
 			background-color: transparent;
