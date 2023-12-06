@@ -38,18 +38,18 @@
 				isForCancelTransaction = false;
 				decodedTextQr = '';
 			}
-		},
-		{
-			text: 'Anular autorización',
-			action: () => {
-				scanning = true;
-				responseCallingAPI = '';
-				isForPassportInformation = false;
-				isForValidatePassport = false;
-				isForCancelTransaction = true;
-				decodedTextQr = '';
-			}
 		}
+		// {
+		// 	text: 'Anular autorización',
+		// 	action: () => {
+		// 		scanning = true;
+		// 		responseCallingAPI = '';
+		// 		isForPassportInformation = false;
+		// 		isForValidatePassport = false;
+		// 		isForCancelTransaction = true;
+		// 		decodedTextQr = '';
+		// 	}
+		// }
 	];
 
 	let isLoading = false;
